@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retail-to-IB EDM — Compliance Review | TMGM 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #FAFBFC; --white: #FFFFFF; --dark: #111827; --grey-900: #1F2937;
+  --grey-700: #374151; --grey-600: #4B5563; --grey-500: #6B7280;
+  --grey-400: #9CA3AF; --grey-300: #D1D5DB; --grey-200: #E5E7EB;
+  --grey-100: #F3F4F6; --grey-50: #F9FAFB;
+  --blue: #3B82F6; --blue-light: #EFF6FF; --blue-dark: #1E40AF;
+  --purple: #8B5CF6; --purple-light: #F5F3FF;
+  --green: #10B981; --green-light: #ECFDF5;
+  --amber: #F59E0B; --amber-light: #FFFBEB;
+  --red: #EF4444; --red-light: #FEF2F2;
+  --font: 'Inter', -apple-system, system-ui, sans-serif;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 10px 15px rgba(0,0,0,0.06), 0 4px 6px rgba(0,0,0,0.04);
+  --radius: 12px; --radius-lg: 16px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { font-family:var(--font); color:var(--dark); background:var(--bg); line-height:1.6; -webkit-font-smoothing:antialiased; }
+
+/* HEADER — SIMPLIFIED FOR COMPLIANCE */
+.header { background:var(--white); border-bottom:1px solid var(--grey-200); padding:24px 40px; position:sticky; top:0; z-index:100; }
+.header-inner { max-width:1200px; margin:0 auto; }
+.header-left h1 { font-size:18px; font-weight:800; color:var(--dark); letter-spacing:-0.3px; }
+.header-meta-row { display:flex; align-items:center; gap:12px; margin-top:6px; flex-wrap:wrap; }
+.header-left .header-meta { font-size:12px; color:var(--grey-500); }
+.header-badges { display:flex; gap:6px; }
+.header-badge { padding:4px 10px; border-radius:20px; font-size:11px; font-weight:600; }
+.badge-en { background:var(--blue-light); color:var(--blue-dark); }
+.badge-id { background:var(--purple-light); color:var(--purple); }
+.badge-ko { background:var(--amber-light); color:var(--amber); }
+.badge-vn { background:var(--green-light); color:var(--green); }
+.badge-th { background:var(--red-light); color:var(--red); }
+.badge-ar { background:var(--grey-100); color:var(--grey-600); }
+
+/* Target regions line */
+.header-regions {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-top:8px;
+  font-size:11.5px;
+  color:var(--grey-600);
+}
+.header-regions-label {
+  font-weight:700;
+  color:var(--grey-700);
+}
+.header-regions-tags {
+  display:flex;
+  gap:6px;
+}
+.region-tag {
+  padding:3px 10px;
+  border-radius:20px;
+  font-size:10.5px;
+  font-weight:600;
+  background:var(--grey-100);
+  color:var(--grey-700);
+}
+
+/* MAIN */
+.main { max-width:1200px; margin:0 auto; padding:32px 40px 80px; }
+
+/* JOURNEY FLOW */
+.journey { margin-bottom:40px; padding:28px 32px; background:var(--white); border-radius:var(--radius-lg); border:1px solid var(--grey-200); box-shadow:var(--shadow-sm); }
+.journey-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--grey-400); margin-bottom:16px; }
+.journey-flow { display:flex; flex-direction:column; gap:14px; position:relative; }
+.journey-row { display:flex; gap:14px; align-items:stretch; position:relative; z-index:1; }
+.journey-row:hover { z-index:10; }
+.journey-row .j-node { flex:1; }
+.j-node { padding:16px 14px; border-radius:10px; text-align:center; transition:all 0.25s ease; position:relative; }
+.j-node:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); }
+.j-node .j-num { font-size:10px; font-weight:800; color:var(--white); width:20px; height:20px; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; margin-bottom:6px; }
+.j-node .j-name { font-size:13px; font-weight:700; color:var(--dark); line-height:1.3; }
+.j-node .j-trigger { font-size:11px; color:var(--grey-500); margin-top:3px; }
+
+.j-node.proposed { background:var(--green-light); border:1.5px solid rgba(16,185,129,0.25); }
+.j-node.proposed .j-num { background:var(--green); }
+
+.j-node.rest { background:var(--grey-50); border:1.5px dashed var(--grey-300); opacity:0.75; }
+.j-node.rest .j-num { background:var(--grey-400); }
+.j-node.rest .j-name { color:var(--grey-500); }
+.j-node.rest .j-trigger { color:var(--grey-400); }
+.j-node.rest:hover { opacity:1; }
+
+/* Arrows */
+.j-node.has-arrow-right::after {
+  content:'→'; position:absolute; right:-12px; top:50%; transform:translateY(-50%);
+  font-size:14px; color:var(--grey-300); font-weight:700; z-index:2;
+}
+.j-node.proposed.has-arrow-right::after { color:var(--green); opacity:0.5; }
+.j-node.rest.has-arrow-right::after { color:var(--grey-300); opacity:0.4; }
+
+/* Hover tooltips */
+.j-node .j-tooltip {
+  position:absolute; bottom:calc(100% + 10px); left:50%; transform:translateX(-50%);
+  background:var(--grey-900); color:var(--white); font-size:12px; font-weight:500;
+  line-height:1.5; padding:10px 14px; border-radius:8px; white-space:normal;
+  width:200px; text-align:left; opacity:0; visibility:hidden;
+  transition:opacity 0.2s, visibility 0.2s; pointer-events:none; z-index:50;
+  box-shadow:var(--shadow-lg);
+}
+.j-node .j-tooltip::after {
+  content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border:6px solid transparent; border-top-color:var(--grey-900);
+}
+.j-node:hover .j-tooltip { opacity:1; visibility:visible; }
+.j-node .j-tooltip.tip-bottom {
+  bottom:auto; top:calc(100% + 10px);
+}
+.j-node .j-tooltip.tip-bottom::after {
+  top:auto; bottom:100%; border-top-color:transparent; border-bottom-color:var(--grey-900);
+}
+.j-node .j-tooltip strong { color:#FCD34D; }
+
+/* EMAIL CARD */
+.email-card { background:var(--white); border-radius:var(--radius-lg); border:1px solid var(--grey-200); box-shadow:var(--shadow-sm); margin-bottom:24px; overflow:hidden; transition:box-shadow 0.2s; scroll-margin-top:80px; }
+.email-card:hover { box-shadow:var(--shadow-md); }
+.email-header { padding:20px 28px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid transparent; cursor:pointer; user-select:none; transition:border-color 0.2s; }
+.email-card.expanded .email-header { border-bottom-color:var(--grey-100); }
+.email-header-left { display:flex; align-items:center; gap:12px; }
+.email-toggle { width:28px; height:28px; border-radius:6px; background:var(--grey-100); display:flex; align-items:center; justify-content:center; color:var(--grey-500); font-size:12px; transition:all 0.3s; flex-shrink:0; }
+.email-card.expanded .email-toggle { background:#CC1042; color:var(--white); }
+.email-card.expanded .email-toggle svg { transform:rotate(180deg); }
+.email-card .email-collapsible { max-height:0; overflow:hidden; transition:max-height 0.4s ease; }
+.email-card.expanded .email-collapsible { max-height:8000px; }
+.email-card.expanded .expand-hint { opacity:0; pointer-events:none; }
+.expand-hint { font-size:11px; color:var(--grey-400); margin-left:8px; font-weight:500; font-style:italic; transition:opacity 0.3s; }
+
+.email-num { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:800; color:var(--white); background:var(--green); }
+.email-meta h2 { font-size:15px; font-weight:700; color:var(--dark); }
+.email-meta .trigger { font-size:12px; color:var(--grey-500); }
+.type-badge { padding:4px 10px; border-radius:6px; font-size:11px; font-weight:600; background:var(--green-light); color:var(--green); }
+
+/* LANG TABS */
+.lang-tabs { display:flex; gap:0; border-bottom:1px solid var(--grey-200); background:var(--grey-50); }
+.lang-tab { flex:1; padding:10px 20px; font-size:12px; font-weight:600; color:var(--grey-500); cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; background:transparent; border-top:none; border-left:none; border-right:none; font-family:var(--font); text-align:center; }
+.lang-tab.active { color:var(--blue); border-bottom-color:var(--blue); background:var(--white); }
+.lang-tab:hover { color:var(--dark); }
+.lang-content { display:none; }
+.lang-content.active { display:block; }
+
+/* EMAIL BODY */
+.email-body { padding:24px 28px; }
+.field { margin-bottom:16px; }
+.field-row { display:flex; align-items:flex-start; gap:12px; }
+.field-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--grey-400); min-width:110px; padding-top:4px; flex-shrink:0; }
+.field-value { font-size:14px; color:var(--dark); line-height:1.6; flex:1; word-break:break-word; }
+.field-value.subject { font-weight:700; font-size:15px; }
+
+/* EMAIL PREVIEW */
+.email-preview { background:var(--grey-50); border:1px solid var(--grey-200); border-radius:var(--radius); padding:24px 28px; margin:16px 0; }
+.email-preview .banner { font-size:18px; font-weight:800; color:var(--dark); margin-bottom:16px; padding-bottom:16px; border-bottom:1px solid var(--grey-200); }
+.email-preview .salutation { font-size:14px; color:var(--grey-600); margin-bottom:12px; }
+.email-preview .content-block { font-size:14px; color:var(--grey-700); line-height:1.7; margin-bottom:16px; white-space:pre-line; }
+.email-preview .cta-block { display:inline-block; padding:10px 24px; background:#000B50; color:var(--white); border-radius:8px; font-size:13px; font-weight:700; text-decoration:none; margin:8px 0; }
+.email-preview .disclaimer { font-size:11px; color:var(--grey-400); margin-top:16px; padding-top:12px; border-top:1px solid var(--grey-200); }
+
+/* BLANK LANG PLACEHOLDER */
+.lang-placeholder { padding:40px 28px; text-align:center; }
+.lang-placeholder-text { font-size:13px; color:var(--grey-400); font-style:italic; }
+
+/* RESPONSIVE */
+@media(max-width:768px) {
+  .header { padding:16px 20px; }
+  .header-inner { flex-direction:column; align-items:flex-start; gap:12px; }
+  .main { padding:20px 16px 60px; }
+  .header-regions { flex-wrap:wrap; }
+  .journey { padding:20px 16px; }
+  .journey-flow { gap:8px; }
+  .journey-row { flex-wrap:wrap; gap:8px; }
+  .journey-row .j-node { flex:1 1 45%; min-width:0; }
+  .email-body { padding:16px 20px; }
+  .email-header { padding:16px 20px; flex-direction:column; align-items:flex-start; gap:8px; }
+  .field-row { flex-direction:column; gap:4px; }
+  .field-label { min-width:auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER — SIMPLIFIED -->
+<div class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <h1>Retail-to-IB EDM — Compliance Review</h1>
+      <div class="header-meta-row">
+        <div class="header-meta">5 Emails · Campaign Content Draft</div>
+        <div class="header-badges">
+          <span class="header-badge badge-en">EN</span>
+          <span class="header-badge badge-id">ID</span>
+          <span class="header-badge badge-ko">KO</span>
+          <span class="header-badge badge-vn">VN</span>
+          <span class="header-badge badge-th">TH</span>
+          <span class="header-badge badge-ar">AR</span>
+        </div>
+      </div>
+      <div class="header-regions">
+        <span class="header-regions-label">🌏 Target Markets:</span>
+        <div class="header-regions-tags">
+          <span class="region-tag">SEA</span>
+          <span class="region-tag">MENA</span>
+          <span class="region-tag">EN Markets</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+
+<!-- DRIP JOURNEY FLOW — HOVER TOOLTIPS ONLY (COMPLIANCE V3) -->
+<div class="journey">
+  <div class="journey-title">Drip Journey Flow — Retail to IB (Phase 1.0)</div>
+  <div class="journey-flow">
+    <div class="journey-row">
+      <div class="j-node proposed has-arrow-right">
+        <div class="j-tooltip tip-bottom"><strong>E1 — The Money Hook</strong><br>Day 0 · First email in the sequence</div>
+        <div class="j-num">E1</div>
+        <div class="j-name">The Money Hook</div>
+        <div class="j-trigger">Day 0 · Curiosity</div>
+      </div>
+      <div class="j-node rest has-arrow-right">
+        <div class="j-tooltip tip-bottom"><strong>Rest Day 1</strong><br>No email sent — 24-hour pause between E1 and E2</div>
+        <div class="j-num">D1</div>
+        <div class="j-name">Rest Day</div>
+        <div class="j-trigger">Let it sink in</div>
+      </div>
+      <div class="j-node proposed has-arrow-right">
+        <div class="j-tooltip tip-bottom"><strong>E2 — Social Proof</strong><br>Day 2 · Second email in the sequence</div>
+        <div class="j-num">E2</div>
+        <div class="j-name">Social Proof</div>
+        <div class="j-trigger">Day 2 · Trust</div>
+      </div>
+      <div class="j-node rest">
+        <div class="j-tooltip tip-bottom"><strong>Rest Day 3</strong><br>No email sent — 24-hour pause between E2 and E3</div>
+        <div class="j-num">D3</div>
+        <div class="j-name">Rest Day</div>
+        <div class="j-trigger">Build anticipation</div>
+      </div>
+    </div>
+    <div class="journey-row">
+      <div class="j-node proposed has-arrow-right">
+        <div class="j-tooltip"><strong>E3 — Objection Handling</strong><br>Day 4 · Third email in the sequence</div>
+        <div class="j-num">E3</div>
+        <div class="j-name">Objection Handling</div>
+        <div class="j-trigger">Day 4 · Confidence</div>
+      </div>
+      <div class="j-node rest has-arrow-right">
+        <div class="j-tooltip"><strong>Rest Day 5</strong><br>No email sent — 24-hour pause between E3 and E4</div>
+        <div class="j-num">D5</div>
+        <div class="j-name">Rest Day</div>
+        <div class="j-trigger">Calm before close</div>
+      </div>
+      <div class="j-node proposed has-arrow-right">
+        <div class="j-tooltip"><strong>E4 — Urgency</strong><br>Day 6 · Fourth email in the sequence</div>
+        <div class="j-num">E4</div>
+        <div class="j-name">Urgency</div>
+        <div class="j-trigger">Day 6 · Scarcity</div>
+      </div>
+      <div class="j-node proposed">
+        <div class="j-tooltip"><strong>E5 — Final Close</strong><br>Day 7 · Final email (back-to-back with E4)</div>
+        <div class="j-num">E5</div>
+        <div class="j-name">Final Close</div>
+        <div class="j-trigger">Day 7 · Decision</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL E1: THE MONEY HOOK -->
+<div id="email-e1" class="email-card">
+  <div class="email-header" onclick="toggleCard(this)">
+    <div class="email-header-left">
+      <div class="email-num">E1</div>
+      <div class="email-meta">
+        <h2>Email 1 — The Money Hook</h2>
+        <div class="trigger">First email in the journey</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="type-badge">Phase 1.0</span>
+      <span class="expand-hint">Click to expand</span>
+      <div class="email-toggle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="transition:transform 0.3s"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    </div>
+  </div>
+  <div class="email-collapsible">
+    <div class="lang-tabs">
+      <button class="lang-tab active" onclick="switchLang(this,'e1','en')">EN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e1','id')">ID</button>
+      <button class="lang-tab" onclick="switchLang(this,'e1','ko')">KO</button>
+      <button class="lang-tab" onclick="switchLang(this,'e1','vn')">VN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e1','th')">TH</button>
+      <button class="lang-tab" onclick="switchLang(this,'e1','ar')">AR</button>
+    </div>
+    <!-- EN -->
+    <div id="e1-en" class="lang-content active">
+      <div class="email-body">
+        <div class="field"><div class="field-row"><span class="field-label">Email Subject</span><span class="field-value subject">What would an extra $500/month look like?</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">Preview Text</span><span class="field-value">You're already trading — now earn from your network too</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">CTA</span><span class="field-value">See How Much You Could Earn</span></div></div>
+        <div class="email-preview">
+          <div class="banner">What Would an Extra $500/Month Look Like?</div>
+          <div class="salutation">Dear [Name],</div>
+          <div class="content-block">You're already trading with TMGM. But did you know you could earn extra income just by sharing your experience with others?
+
+Here's how it works:
+
+Refer 5 friends who each trade 20 lots/month → you earn $800–$1,100/month in commissions.
+
+That's $8–$11 per lot, paid daily — directly to your account. No caps on how many friends you can refer.</div>
+          <div class="content-block" style="font-weight:700; font-size:16px; color:var(--dark);">3 Steps. That's It.</div>
+          <div class="content-block">1. Sign up as a TMGM Introducing Broker
+2. Share your personal referral link with friends, trading groups, or your community
+3. Earn commissions every time your referrals trade — paid daily</div>
+          <div class="content-block">You already know the platform. You already trust the execution. Now turn that experience into daily income.</div>
+          <a class="cta-block">See How Much You Could Earn →</a>
+          <div class="content-block" style="margin-top:16px; font-size:12px; color:var(--grey-500);">Not the IB type? Ask us about our Finfluencer program →</div>
+          <div class="disclaimer">Investing in CFDs carries significant risks and is not suitable for all investors. VFSC 40356</div>
+        </div>
+      </div>
+    </div>
+    <!-- ID -->
+    <div id="e1-id" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇮🇩 Indonesian translation — pending</div></div>
+    </div>
+    <!-- KO -->
+    <div id="e1-ko" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇰🇷 Korean translation — pending</div></div>
+    </div>
+    <!-- VN -->
+    <div id="e1-vn" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇻🇳 Vietnamese translation — pending</div></div>
+    </div>
+    <!-- TH -->
+    <div id="e1-th" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇹🇭 Thai translation — pending</div></div>
+    </div>
+    <!-- AR -->
+    <div id="e1-ar" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇸🇦 Arabic translation — pending</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Email cards E2-E5 will go here in next section build -->
+
+<!-- EMAIL E2: SOCIAL PROOF -->
+<div id="email-e2" class="email-card">
+  <div class="email-header" onclick="toggleCard(this)">
+    <div class="email-header-left">
+      <div class="email-num">E2</div>
+      <div class="email-meta">
+        <h2>Email 2 — Social Proof</h2>
+        <div class="trigger">After 1 rest day</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="type-badge">Phase 1.0</span>
+      <span class="expand-hint">Click to expand</span>
+      <div class="email-toggle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="transition:transform 0.3s"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    </div>
+  </div>
+  <div class="email-collapsible">
+    <div class="lang-tabs">
+      <button class="lang-tab active" onclick="switchLang(this,'e2','en')">EN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e2','id')">ID</button>
+      <button class="lang-tab" onclick="switchLang(this,'e2','ko')">KO</button>
+      <button class="lang-tab" onclick="switchLang(this,'e2','vn')">VN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e2','th')">TH</button>
+      <button class="lang-tab" onclick="switchLang(this,'e2','ar')">AR</button>
+    </div>
+    <!-- EN -->
+    <div id="e2-en" class="lang-content active">
+      <div class="email-body">
+        <div class="field"><div class="field-row"><span class="field-label">Email Subject</span><span class="field-value subject">They started just like you — now they earn daily</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">Preview Text</span><span class="field-value">Real traders, real commissions — see how they're earning with TMGM</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">CTA</span><span class="field-value">Start Your IB Application</span></div></div>
+        <div class="email-preview">
+          <div class="banner">They Started Just Like You.</div>
+          <div class="salutation">Dear [Name],</div>
+          <div class="content-block">Two days ago, we showed you the numbers. Today, let us show you the people behind them.
+
+Traders just like you are already earning daily commissions as TMGM Introducing Brokers. Here's what that looks like:</div>
+          <div class="content-block" style="font-weight:700; font-size:16px; color:var(--dark);">Real Earning Scenarios</div>
+          <div class="content-block">📊 Trader A — referred 5 friends, each trading 15 lots/month
+→ Earns $600–$825/month in commissions
+
+📊 Trader B — referred 8 friends, each trading 20 lots/month
+→ Earns $1,280–$1,760/month in commissions
+
+📊 Trader C — referred 3 friends, each trading 10 lots/month
+→ Earns $240–$330/month — a solid start with room to grow</div>
+          <div class="content-block" style="font-weight:700; font-size:16px; color:var(--dark);">Why TMGM — Not Just Any Broker</div>
+          <div class="content-block">✅ Paid daily — not weekly like some competitors. Your commissions hit your account every single day.
+✅ $8–$11 per lot — competitive rates that reward your effort.
+✅ PAMM & MAM support — if you manage funds, you can earn even more.
+✅ Sub-IB structure — build your own team of referrers underneath you.
+✅ Dedicated account manager — personal support to help you grow.</div>
+          <div class="content-block">You're already trading with us. Your friends probably are too — or want to be. Why not earn from what you're already doing?</div>
+          <a class="cta-block">Start Your IB Application →</a>
+          <div class="disclaimer">Investing in CFDs carries significant risks and is not suitable for all investors. VFSC 40356</div>
+        </div>
+      </div>
+    </div>
+    <!-- ID -->
+    <div id="e2-id" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇮🇩 Indonesian translation — pending</div></div>
+    </div>
+    <!-- KO -->
+    <div id="e2-ko" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇰🇷 Korean translation — pending</div></div>
+    </div>
+    <!-- VN -->
+    <div id="e2-vn" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇻🇳 Vietnamese translation — pending</div></div>
+    </div>
+    <!-- TH -->
+    <div id="e2-th" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇹🇭 Thai translation — pending</div></div>
+    </div>
+    <!-- AR -->
+    <div id="e2-ar" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇸🇦 Arabic translation — pending</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL E3: OBJECTION HANDLING -->
+<div id="email-e3" class="email-card">
+  <div class="email-header" onclick="toggleCard(this)">
+    <div class="email-header-left">
+      <div class="email-num">E3</div>
+      <div class="email-meta">
+        <h2>Email 3 — Objection Handling</h2>
+        <div class="trigger">After 1 rest day</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="type-badge">Phase 1.0</span>
+      <span class="expand-hint">Click to expand</span>
+      <div class="email-toggle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="transition:transform 0.3s"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    </div>
+  </div>
+  <div class="email-collapsible">
+    <div class="lang-tabs">
+      <button class="lang-tab active" onclick="switchLang(this,'e3','en')">EN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e3','id')">ID</button>
+      <button class="lang-tab" onclick="switchLang(this,'e3','ko')">KO</button>
+      <button class="lang-tab" onclick="switchLang(this,'e3','vn')">VN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e3','th')">TH</button>
+      <button class="lang-tab" onclick="switchLang(this,'e3','ar')">AR</button>
+    </div>
+    <!-- EN -->
+    <div id="e3-en" class="lang-content active">
+      <div class="email-body">
+        <div class="field"><div class="field-row"><span class="field-label">Email Subject</span><span class="field-value subject">Think it's complicated? Here's what it actually takes</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">Preview Text</span><span class="field-value">3 common concerns — and why none of them should stop you</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">CTA</span><span class="field-value">Apply in 2 Minutes</span></div></div>
+        <div class="email-preview">
+          <div class="banner">Think It's Complicated? Let's Clear That Up.</div>
+          <div class="salutation">Dear [Name],</div>
+          <div class="content-block">You've seen the earning potential. You've seen the proof. But maybe something is still holding you back.
+
+Let us address the three most common concerns we hear:</div>
+          <div class="content-block" style="font-weight:700; font-size:15px; color:var(--dark);">❝ I don't have time for this ❞</div>
+          <div class="content-block">It's passive income. Once your referrals start trading, you earn automatically — every day, without lifting a finger. There's no daily task, no content to create, no clients to manage. You refer once, and earn continuously.</div>
+          <div class="content-block" style="font-weight:700; font-size:15px; color:var(--dark);">❝ I don't know enough people ❞</div>
+          <div class="content-block">You don't need hundreds. Just 3–5 active traders can generate meaningful monthly income. Think about your trading groups, your WhatsApp chats, your colleagues who've asked you about trading. That's your network — and it's enough.</div>
+          <div class="content-block" style="font-weight:700; font-size:15px; color:var(--dark);">❝ I don't know how to promote ❞</div>
+          <div class="content-block">You don't have to. TMGM gives you everything you need:
+
+📊 IB Portal — track your referrals and commissions in real time
+🎨 Ready-made banners & creative materials — just share, no design needed
+🔗 Personal tracking link — unique to you, works everywhere
+👤 Dedicated account manager — someone in your corner to help you grow</div>
+          <div class="content-block">The sign-up takes 2 minutes. The earning starts as soon as your first referral trades.</div>
+          <a class="cta-block">Apply in 2 Minutes →</a>
+          <div class="disclaimer">Investing in CFDs carries significant risks and is not suitable for all investors. VFSC 40356</div>
+        </div>
+      </div>
+    </div>
+    <!-- ID -->
+    <div id="e3-id" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇮🇩 Indonesian translation — pending</div></div>
+    </div>
+    <!-- KO -->
+    <div id="e3-ko" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇰🇷 Korean translation — pending</div></div>
+    </div>
+    <!-- VN -->
+    <div id="e3-vn" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇻🇳 Vietnamese translation — pending</div></div>
+    </div>
+    <!-- TH -->
+    <div id="e3-th" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇹🇭 Thai translation — pending</div></div>
+    </div>
+    <!-- AR -->
+    <div id="e3-ar" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇸🇦 Arabic translation — pending</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL E4: URGENCY -->
+<div id="email-e4" class="email-card">
+  <div class="email-header" onclick="toggleCard(this)">
+    <div class="email-header-left">
+      <div class="email-num" style="background:#e8833a;">E4</div>
+      <div class="email-meta">
+        <h2>Email 4 — Urgency</h2>
+        <div class="trigger">After 1 rest day</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="type-badge">Phase 1.0</span>
+      <span class="expand-hint">Click to expand</span>
+      <div class="email-toggle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="transition:transform 0.3s"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    </div>
+  </div>
+  <div class="email-collapsible">
+    <div class="lang-tabs">
+      <button class="lang-tab active" onclick="switchLang(this,'e4','en')">EN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e4','id')">ID</button>
+      <button class="lang-tab" onclick="switchLang(this,'e4','ko')">KO</button>
+      <button class="lang-tab" onclick="switchLang(this,'e4','vn')">VN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e4','th')">TH</button>
+      <button class="lang-tab" onclick="switchLang(this,'e4','ar')">AR</button>
+    </div>
+    <!-- EN -->
+    <div id="e4-en" class="lang-content active">
+      <div class="email-body">
+        <div class="field"><div class="field-row"><span class="field-label">Email Subject</span><span class="field-value subject">%%First_Name%%, your spot is still open</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">Preview Text</span><span class="field-value">Every day you wait is a day you're not earning</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">CTA</span><span class="field-value">Start Earning Today</span></div></div>
+
+        <div class="email-preview">
+          <div class="banner">[Name], Your Spot Is Still Open</div>
+          <div class="salutation">Dear [Name],</div>
+          <div class="content-block">Over the past week, we've shown you:
+
+✅ The numbers — $8–$11 per lot, paid daily
+✅ The proof — traders like you earning $600–$1,700/month
+✅ The tools — IB Portal, creative materials, dedicated support
+
+You've seen everything. The only thing left is to start.</div>
+          <div class="content-block" style="font-weight:700; font-size:15px; color:var(--dark);">Here's the thing most people don't think about:</div>
+          <div class="content-block">Every day you wait is a day your network is trading — without earning you a single dollar in commissions.
+
+Your friends are already placing trades. Your colleagues are already active. That volume is happening right now, and you're not earning from it.
+
+The sign-up takes 2 minutes. The commissions start the same day your referrals trade.</div>
+          <a class="cta-block">Start Earning Today →</a>
+          <div class="disclaimer">Investing in CFDs carries significant risks and is not suitable for all investors. VFSC 40356</div>
+        </div>
+      </div>
+    </div>
+    <!-- ID -->
+    <div id="e4-id" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇮🇩 Indonesian translation — pending</div></div>
+    </div>
+    <!-- KO -->
+    <div id="e4-ko" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇰🇷 Korean translation — pending</div></div>
+    </div>
+    <!-- VN -->
+    <div id="e4-vn" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇻🇳 Vietnamese translation — pending</div></div>
+    </div>
+    <!-- TH -->
+    <div id="e4-th" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇹🇭 Thai translation — pending</div></div>
+    </div>
+    <!-- AR -->
+    <div id="e4-ar" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇸🇦 Arabic translation — pending</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL E5: FINAL CLOSE -->
+<div id="email-e5" class="email-card">
+  <div class="email-header" onclick="toggleCard(this)">
+    <div class="email-header-left">
+      <div class="email-num" style="background:#d32f2f;">E5</div>
+      <div class="email-meta">
+        <h2>Email 5 — Final Close</h2>
+        <div class="trigger">Back-to-back with Email 4 · Final email in the journey</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="type-badge">Phase 1.0</span>
+      <span class="expand-hint">Click to expand</span>
+      <div class="email-toggle"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="transition:transform 0.3s"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
+    </div>
+  </div>
+  <div class="email-collapsible">
+    <div class="lang-tabs">
+      <button class="lang-tab active" onclick="switchLang(this,'e5','en')">EN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e5','id')">ID</button>
+      <button class="lang-tab" onclick="switchLang(this,'e5','ko')">KO</button>
+      <button class="lang-tab" onclick="switchLang(this,'e5','vn')">VN</button>
+      <button class="lang-tab" onclick="switchLang(this,'e5','th')">TH</button>
+      <button class="lang-tab" onclick="switchLang(this,'e5','ar')">AR</button>
+    </div>
+    <!-- EN -->
+    <div id="e5-en" class="lang-content active">
+      <div class="email-body">
+        <div class="field"><div class="field-row"><span class="field-label">Email Subject</span><span class="field-value subject">%%First_Name%%, final reminder for now</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">Preview Text</span><span class="field-value">The door is open whenever you're ready</span></div></div>
+        <div class="field"><div class="field-row"><span class="field-label">CTA</span><span class="field-value">Apply Now</span></div></div>
+        <div class="email-preview">
+          <div class="banner">[Name], Final Reminder For Now.</div>
+          <div class="salutation">Dear [Name],</div>
+          <div class="content-block">Over the past week, we've shown you the numbers, the proof, and the tools.
+
+$8–$11 per lot. Paid daily. No cap on referrals.
+
+We've addressed the concerns. We've shown you what other traders are earning. We've given you everything you need to decide.
+
+Now it's your call.</div>
+          <a class="cta-block">Apply Now →</a>
+          <div class="content-block" style="margin-top:20px;">We'll give you some space and check back in with you next month. The door is open whenever you're ready.
+
+Either way, thank you for trading with TMGM.</div>
+          <div class="disclaimer">Investing in CFDs carries significant risks and is not suitable for all investors. VFSC 40356</div>
+        </div>
+      </div>
+    </div>
+    <!-- ID -->
+    <div id="e5-id" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇮🇩 Indonesian translation — pending</div></div>
+    </div>
+    <!-- KO -->
+    <div id="e5-ko" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇰🇷 Korean translation — pending</div></div>
+    </div>
+    <!-- VN -->
+    <div id="e5-vn" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇻🇳 Vietnamese translation — pending</div></div>
+    </div>
+    <!-- TH -->
+    <div id="e5-th" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇹🇭 Thai translation — pending</div></div>
+    </div>
+    <!-- AR -->
+    <div id="e5-ar" class="lang-content">
+      <div class="lang-placeholder"><div class="lang-placeholder-text">🇸🇦 Arabic translation — pending</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<script>
+function toggleCard(header) {
+  const card = header.closest('.email-card');
+  const wasExpanded = card.classList.contains('expanded');
+  document.querySelectorAll('.email-card.expanded').forEach(c => c.classList.remove('expanded'));
+  if (!wasExpanded) card.classList.add('expanded');
+}
+
+function switchLang(btn, emailId, lang) {
+  const card = btn.closest('.email-card');
+  card.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+  card.querySelectorAll('.lang-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(emailId + '-' + lang).classList.add('active');
+}
+</script>
+
+</body>
+</html>
